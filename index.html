@@ -362,7 +362,7 @@ var ALL_TICKERS=(function(){
 
 var CAT_COLORS={"Forex Major":"#0D5C8A","Forex Minor":"#166534","Forex Exotic":"#6D28D9","Metal":"#B8880B","Commodity":"#9A3412","Index":"#0369A1","Crypto":"#7C3AED","Crypto Cross":"#B91C1C"};
 
-var PROMPT="You are an Elite Market Intelligence Agent with live web search access.\n\nCRITICAL RULES:\n1. USE WEB SEARCH to find real current data for EVERY section.\n2. Never use em-dash, asterisk, or double-asterisk in output.\n3. Complete ALL 8 sections without exception.\n4. If a primary source fails use alternatives. Mark N/A only as absolute last resort.\n5. Analyze PAST 24HRS and NEXT 24HRS only.\n\nTICKER: XAUUSD=Gold, XAGUSD=Silver, EURUSD=Euro/USD, GBPUSD=GBP/USD, USDJPY=USD/JPY, AUDUSD=AUD/USD, USDCAD=USD/CAD, BTCUSD=Bitcoin, ETHUSD=Ethereum, SOLUSD=Solana, XRPUSD=XRP, BNBUSD=BNB, USOIL=WTI Crude, US30=Dow Jones, NAS100=Nasdaq100, SPX500=S&P500, GER40=DAX\n\nSOURCES: Investing.com, MarketWatch, Reuters, Bloomberg, CNBC, FXStreet, CoinDesk, CoinTelegraph, ForexFactory (Red Folder ONLY), barchart.com/commitments-of-traders, cmegroup.com, insider-week.com\n\nFOREX FACTORY RULE: Red Folder only. NO-TRADE WINDOW = 1hr before + 1hr after. ALL TIMES IN ET (UTC-4, New York). To convert GMT to ET subtract 4 hours.\n\nOUTPUT FORMAT:\n\n## NEWS BRIEF\n- [headline] (Source)\n- [headline] (Source)\n- [headline] (Source)\n\n---\n\n## FUNDAMENTAL PROJECTION\n- [driver 1]\n- [driver 2]\n- [driver 3]\n- [driver 4]\n- [driver 5]\n> Fundamental Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## TECHNICAL PROJECTION\n- [trend structure H4/D1]\n- [support level with price]\n- [resistance level with price]\n- [RSI/MACD reading]\n- [pattern note]\n> Technical Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## FOREX FACTORY\nTABLE_FF_START\nCommodity | Event | Date | Time GMT | Forecast | Previous | No-Trade Window GMT\nTABLE_FF_END\nIf no red folder events write exactly: NO_RED_FOLDER_EVENTS\n\n---\n\n## BARCHART COT\nTABLE_COT_START\nCommodity | Net Positions | Net Change | Long | Long Chg | Short | Short Chg | 52W Low | 52W High | COT Signal\nTABLE_COT_END\n> COT Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## CME GROUP\nTABLE_CME_START\nCommodity | Open Interest | OI Change | Volume | Settlement | CME Signal\nTABLE_CME_END\n- [CME insight 1]\n- [CME insight 2]\n> CME Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## SEASONALITY TENDENCY\nTABLE_SEASON_START\nCommodity | Month | 5-Day Trend | Direction | Strength | Season Signal\nTABLE_SEASON_END\n- [seasonal insight 1]\n- [seasonal insight 2]\n> Seasonality Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## MOVEMENT PROJECTION - NEXT 24HRS\n- [Expected price action]\n- [Key price level]\n- [Main catalyst]\n- [Volume/flow signal]\n- [Final directional call]\n\nOVERALL BIAS: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\nPRIMARY DIRECTION: BUY or SELL or WAIT";
+var PROMPT="You are an Elite Market Intelligence Agent with live web search access.\n\nCRITICAL RULES:\n1. USE WEB SEARCH to find real current data for EVERY section.\n2. Never use em-dash, asterisk, or double-asterisk in output.\n3. Complete ALL 8 sections without exception.\n4. If a primary source fails use alternatives. Mark N/A only as absolute last resort.\n5. Analyze PAST 24HRS and NEXT 24HRS only.\n\nTICKER: XAUUSD=Gold, XAGUSD=Silver, EURUSD=Euro/USD, GBPUSD=GBP/USD, USDJPY=USD/JPY, AUDUSD=AUD/USD, USDCAD=USD/CAD, BTCUSD=Bitcoin, ETHUSD=Ethereum, SOLUSD=Solana, XRPUSD=XRP, BNBUSD=BNB, USOIL=WTI Crude, US30=Dow Jones, NAS100=Nasdaq100, SPX500=S&P500, GER40=DAX\n\nSOURCES: Investing.com, MarketWatch, Reuters, Bloomberg, CNBC, FXStreet, CoinDesk, CoinTelegraph, ForexFactory (Red Folder ONLY), barchart.com/commitments-of-traders, cmegroup.com, insider-week.com\n\nFOREX FACTORY BACKGROUND PROTOCOL (run silently, do not narrate):\nSTEP 1 - Fetch ForexFactory.com economic calendar for today.\nSTEP 2 - Filter: High Impact (Red Folder) events ONLY.\nSTEP 3 - Extract: Event Name, Currency, Event Time (ET UTC-4).\nSTEP 4 - No-Trade Window: Event Time minus 1hr = Start. Event Time plus 1hr = End.\nSTEP 5 - Merge overlapping windows for same currency.\nSTEP 6 - Trading Rule: current ET time inside window = BLOCKED, outside = ALLOWED.\nSTEP 7 - Currency Pair Mapping: USD=EURUSD,GBPUSD,USDJPY,USDCHF,AUDUSD,USDCAD,NZDUSD,XAUUSD,USOIL,US30,NAS100,SPX500 | EUR=EURUSD,EURGBP,EURJPY,EURCHF,EURAUD,EURCAD,EURNZD | GBP=GBPUSD,EURGBP,GBPJPY,GBPCHF,GBPAUD,GBPCAD,GBPNZD | JPY=USDJPY,EURJPY,GBPJPY,AUDJPY,CADJPY,CHFJPY,NZDJPY | AUD=AUDUSD,EURAUD,GBPAUD,AUDCAD,AUDCHF,AUDJPY,AUDNZD | CAD=USDCAD,EURCAD,GBPCAD,AUDCAD,CADCHF,CADJPY,NZDCAD | NZD=NZDUSD,NZDCHF,NZDJPY,AUDNZD,NZDCAD | CHF=USDCHF,EURCHF,GBPCHF,AUDCHF,CADCHF,CHFJPY.\nALL TIMES ET (UTC-4). Convert GMT to ET: subtract 4 hours.\n\nOUTPUT FORMAT:\n\n## NEWS BRIEF\nBACKEND MODE: Financial news only (24-48hrs). NO technicals. NO FF calendar. Run silently.\nIdentify Base / Quote currencies. Collect: central bank, inflation, rate expectations, economic performance, geopolitical/policy.\nOutput exactly:\nNews 1: [headline summary] (Source)\nNews 2: [headline summary] (Source)\nNews 3: [headline summary] (Source)\nMarket Sentiment: [Positive / Negative / Mixed]\nOutlook Impact: [one sentence short-term impact on the pair]\n\n---\n\n## FUNDAMENTAL PROJECTION\\nBACKEND MODE: Use ONLY macroeconomic data. NO technical indicators. NO FF calendar events. NO news. Run silently.\\nSTEP 1 - Identify ticker and split into Base / Quote currencies.\\nSTEP 2 - Analyze Base currency: interest rate outlook, inflation trend, GDP growth, central bank stance, employment.\\nSTEP 3 - Analyze Quote currency: same factors.\\nSTEP 4 - Compare relative strength: Base stronger = Bullish, Quote stronger = Bearish, Equal = Neutral.\\nSTEP 5 - Generate projection for short-to-medium term (days to weeks).\\nOutput exactly:\\nBase Currency Strength: [Strong / Neutral / Weak]\\nQuote Currency Strength: [Strong / Neutral / Weak]\\nInterest Rate Differential: [brief comparison]\\nInflation Outlook: [Base vs Quote trend]\\nCentral Bank Stance: [Hawkish / Neutral / Dovish for each]\\nPrimary Drivers: [2-3 macro factors driving the projection]\\nFundamental Projection: [Bullish / Bearish / Neutral]\\n> Fundamental Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## TECHNICAL PROJECTION\\nBACKEND MODE: Use ONLY price-based technical data. NO news. NO fundamentals. NO FF events. Run silently.\\nSTEP 1 - Identify ticker and timeframes: D1 overall trend, 4H swing structure, 1H intraday bias.\\nSTEP 2 - Determine trend: Bullish / Bearish / Sideways.\\nSTEP 3 - Detect key levels: Major Support, Major Resistance, Liquidity Zones, Previous High/Low.\\nSTEP 4 - Momentum: Moving Average direction, RSI, market structure (HH/HL or LH/LL).\\nSTEP 5 - Project next session directional bias.\\nOutput exactly:\\nTrend Direction: [Bullish / Bearish / Sideways]\\nKey Support: [price]\\nKey Resistance: [price]\\nRSI Reading: [value and signal]\\nMarket Structure: [HH/HL or LH/LL]\\nTechnical Projection: [Bullish continuation / Bearish continuation / Range consolidation / Breakout potential]\\nExpected Movement: [one sentence on projected price behavior]\\n> Technical Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## FOREX FACTORY\\nFF_EVENT_START\\nDate: [date ET]\\nEvent: [event name]\\nCurrency: [currency]\\nEvent Time: [time ET]\\nNo-Trade Window: [start ET] to [end ET]\\nAffected Pairs: [pairs from currency mapping]\\nTrading Status: ALLOWED or BLOCKED\\nFF_EVENT_END\\nRepeat for each High Impact event found.\\nIf no High Impact events write exactly: NO_RED_FOLDER_EVENTS\n\n---\n\n## BARCHART COT\nTABLE_COT_START\nCommodity | Net Positions | Net Change | Long | Long Chg | Short | Short Chg | 52W Low | 52W High | COT Signal\nTABLE_COT_END\n> COT Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## CME GROUP\nTABLE_CME_START\nCommodity | Open Interest | OI Change | Volume | Settlement | CME Signal\nTABLE_CME_END\n- [CME insight 1]\n- [CME insight 2]\n> CME Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## SEASONALITY TENDENCY\nTABLE_SEASON_START\nCommodity | Month | 5-Day Trend | Direction | Strength | Season Signal\nTABLE_SEASON_END\n- [seasonal insight 1]\n- [seasonal insight 2]\n> Seasonality Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## MOVEMENT PROJECTION - NEXT 24HRS\n- [Expected price action]\n- [Key price level]\n- [Main catalyst]\n- [Volume/flow signal]\n- [Final directional call]\n\nOVERALL BIAS: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\nPRIMARY DIRECTION: BUY or SELL or WAIT";
 
 var PIPE_STAGES=[
   {id:"news",icon:"📰",label:"News Sentiment Analysis",accent:"#9A6E00",steps:["Connecting to Investing.com...","Fetching MarketWatch and Reuters...","Pulling FXStreet and CNBC...","Classifying sentiment...","Tagging high-impact stories..."]},
@@ -781,6 +781,15 @@ function parseSignals(text){
     if(line.startsWith(">")&&line.toUpperCase().includes("COT BIAS"))out.cotBias=eb(line);
     if(line.startsWith(">")&&line.toUpperCase().includes("CME BIAS"))out.cmeBias=eb(line);
     if(line.startsWith(">")&&line.toUpperCase().includes("SEASONALITY BIAS"))out.seasonBias=eb(line);
+    // Detect FF_EVENT blocks (new format)
+    if(line.trim()==="FF_EVENT_START"){inFF=true;}
+    if(inFF&&line.startsWith("No-Trade Window:")){
+      out.hasRedFolder=true;
+      var win=line.replace("No-Trade Window:","").trim();
+      if(win)out.noTradeWindows.push(win);
+    }
+    if(line.trim()==="FF_EVENT_END"){inFF=false;}
+    // Legacy TABLE_FF format fallback
     if(inFF&&line.includes("|")&&!line.toLowerCase().includes("commodity")&&!line.includes("TABLE_")){
       if(!line.toUpperCase().includes("NO_RED")){out.hasRedFolder=true;var pts=line.split("|").map(function(p){return p.trim();});if(pts.length>=7&&pts[6]&&pts[6].includes("to"))out.noTradeWindows.push(pts[6]);}
     }
@@ -889,11 +898,77 @@ function renderText(text,container){
       html+=renderTable(rows,type);i++;continue;
     }
     if(line.includes("TABLE_FF_END")||line.includes("TABLE_COT_END")||line.includes("TABLE_CME_END")||line.includes("TABLE_SEASON_END")){i++;continue;}
+    if(line.trim()==="FF_EVENT_START"){
+      var evLines=[]; i++;
+      while(i<lines.length&&lines[i].trim()!=="FF_EVENT_END"){evLines.push(clean(lines[i]));i++;}
+      var evMap={};
+      evLines.forEach(function(l){
+        var sep=l.indexOf(":");
+        if(sep>0){var k=l.slice(0,sep).trim();var v=l.slice(sep+1).trim();evMap[k]=v;}
+      });
+      var isBlocked=(evMap["Trading Status"]||"").toUpperCase().includes("BLOCKED");
+      var evCol=isBlocked?RED:GREEN;
+      var evBg=isBlocked?"#FFF3F3":"#F0FBF4";
+      var evIcon=isBlocked?"⛔":"✓";
+      html+='<div style="border:1px solid '+evCol+'44;border-left:4px solid '+evCol+';border-radius:6px;background:'+evBg+';padding:.65rem .9rem;margin-bottom:.55rem;font-family:'+T+'">';
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem">';
+      html+='<span style="font-size:.82rem;font-weight:700;color:'+evCol+'">'+evIcon+' '+(evMap["Event"]||"Event")+"</span>";
+      html+='<span style="font-size:.65rem;font-weight:700;color:'+evCol+';background:'+evCol+'18;border:1px solid '+evCol+'44;border-radius:3px;padding:2px 8px">'+(evMap["Trading Status"]||"")+"</span>";
+      html+='</div>';
+      if(evMap["Currency"])html+='<div style="font-size:.72rem;color:#2D3A50;margin-bottom:.18rem"><span style="font-weight:700;color:'+NAVY+'">Currency:</span> '+(evMap["Currency"]||"")+"</div>";
+      if(evMap["Event Time"])html+='<div style="font-size:.72rem;color:#2D3A50;margin-bottom:.18rem"><span style="font-weight:700;color:'+NAVY+'">Event Time ET:</span> '+(evMap["Event Time"]||"")+"</div>";
+      if(evMap["No-Trade Window"])html+='<div style="font-size:.72rem;color:'+evCol+';font-weight:700;margin-bottom:.18rem">⛔ No-Trade: '+(evMap["No-Trade Window"]||"")+"</div>";
+      if(evMap["Affected Pairs"])html+='<div style="font-size:.68rem;color:#6B7A90;margin-bottom:.18rem"><span style="font-weight:700;color:'+NAVY+'">Pairs:</span> '+(evMap["Affected Pairs"]||"")+"</div>";
+      if(evMap["Date"])html+='<div style="font-size:.62rem;color:#9AAEC8;font-style:italic">Date: '+(evMap["Date"]||"")+"</div>";
+      html+='</div>';
+      i++;continue;
+    }
+    if(line.trim()==="FF_EVENT_END"){i++;continue;}
     if(line.trim()==="NO_RED_FOLDER_EVENTS"){html+='<div style="font-family:'+T+';font-size:.85rem;color:'+GREEN+';background:#F0FBF4;border:1px solid '+GREEN+'33;border-left:4px solid '+GREEN+';border-radius:4px;padding:.48rem .82rem;margin-bottom:.42rem">✓ No high-impact red folder events in the 24H window.</div>';i++;continue;}
     if(line.match(/^#{1,2}\s/)){html+='<div style="margin-top:1.8rem;margin-bottom:.65rem"><div style="font-family:'+T+';font-size:1.02rem;font-weight:700;color:'+NAVY+';border-bottom:2px solid '+GOLD+';padding-bottom:.32rem;letter-spacing:.02em;text-transform:uppercase">'+line.replace(/^#+\s/,"")+'</div></div>';}
     else if(line.startsWith("---")){html+='<div style="height:1px;background:#E2EAF4;margin:1rem 0"></div>';}
     else if(line.toUpperCase().startsWith("OVERALL BIAS:")||line.toUpperCase().startsWith("PRIMARY DIRECTION:")){var col=biasCol(line);html+='<div style="font-family:'+T+';font-size:.96rem;font-weight:700;color:'+col+';background:'+col+'10;border:1px solid '+col+'44;border-left:4px solid '+col+';border-radius:4px;padding:.52rem .88rem;margin-top:.38rem">'+line+'</div>';}
-    else if(line.startsWith(">")){var col=biasCol(line);html+='<div style="font-family:'+T+';font-size:.92rem;font-weight:700;color:'+col+';margin-left:1.3rem;margin-top:.42rem;padding:.26rem .62rem;background:'+col+'0E;border-radius:3px;display:inline-block">'+line.slice(1).trim()+'</div><br>';}
+    else if(line.startsWith(">")){
+      var col=biasCol(line);
+      html+='<div style="font-family:'+T+';font-size:.92rem;font-weight:700;color:'+col+';margin-left:1.3rem;margin-top:.42rem;padding:.26rem .62rem;background:'+col+'0E;border-radius:3px;display:inline-block">'+line.slice(1).trim()+'</div><br>';
+    }
+    else if((function(){
+      var techFields=["Trend Direction:","Key Support:","Key Resistance:","RSI Reading:","Market Structure:","Technical Projection:","Expected Movement:","Base Currency Strength:","Quote Currency Strength:","Interest Rate Differential:","Inflation Outlook:","Central Bank Stance:","Primary Drivers:","Fundamental Projection:","News 1:","News 2:","News 3:","Market Sentiment:","Outlook Impact:"];
+      return techFields.some(function(f){return line.startsWith(f);});
+    })()){
+      var sep=line.indexOf(":");
+      var fKey=line.slice(0,sep).trim();
+      var fVal=line.slice(sep+1).trim();
+      var fCol=NAVY;
+      var fBg="#F6F8FC";
+      if(fKey==="Trend Direction"){
+        fCol=fVal.toUpperCase().includes("BULL")?GREEN:fVal.toUpperCase().includes("BEAR")?RED:AMBER;
+        fBg=fVal.toUpperCase().includes("BULL")?"#F0FBF4":fVal.toUpperCase().includes("BEAR")?"#FFF3F3":"#FFFCF0";
+      } else if(fKey==="Technical Projection"){
+        fCol=fVal.toUpperCase().includes("BULL")?GREEN:fVal.toUpperCase().includes("BEAR")?RED:AMBER;
+        fBg=fVal.toUpperCase().includes("BULL")?"#F0FBF4":fVal.toUpperCase().includes("BEAR")?"#FFF3F3":"#FFFCF0";
+      } else if(fKey==="Key Support"){fCol=GREEN;}
+      else if(fKey==="Key Resistance"){fCol=RED;}
+      else if(fKey==="Base Currency Strength"||fKey==="Quote Currency Strength"){
+        fCol=fVal.toUpperCase().includes("STRONG")?GREEN:fVal.toUpperCase().includes("WEAK")?RED:AMBER;
+      } else if(fKey==="Fundamental Projection"){
+        fCol=fVal.toUpperCase().includes("BULL")?GREEN:fVal.toUpperCase().includes("BEAR")?RED:AMBER;
+        fBg=fVal.toUpperCase().includes("BULL")?"#F0FBF4":fVal.toUpperCase().includes("BEAR")?"#FFF3F3":"#FFFCF0";
+      } else if(fKey==="Central Bank Stance"){
+        fCol=fVal.toUpperCase().includes("HAWK")?GREEN:fVal.toUpperCase().includes("DOV")?RED:AMBER;
+      } else if(fKey==="Market Sentiment"){
+        fCol=fVal.toUpperCase().includes("POSITIVE")?GREEN:fVal.toUpperCase().includes("NEGATIVE")?RED:AMBER;
+        fBg=fVal.toUpperCase().includes("POSITIVE")?"#F0FBF4":fVal.toUpperCase().includes("NEGATIVE")?"#FFF3F3":"#FFFCF0";
+      } else if(fKey==="News 1:"||fKey==="News 2:"||fKey==="News 3:"){
+        fCol="#0D5C8A";
+      } else if(fKey==="Outlook Impact"){
+        fCol="#2D3A50";
+      }
+      html+='<div style="display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.32rem;padding:.3rem .6rem;background:'+fBg+';border-left:3px solid '+fCol+';border-radius:3px">';
+      html+='<span style="font-family:'+T+';font-size:.72rem;font-weight:700;color:#6B7A90;white-space:nowrap;min-width:120px">'+fKey+'</span>';
+      html+='<span style="font-family:'+T+';font-size:.82rem;font-weight:700;color:'+fCol+'">'+fVal+'</span>';
+      html+='</div>';
+    }
     else if(line.startsWith("-")||line.startsWith("•")){html+='<div style="display:flex;align-items:flex-start;gap:.58rem;margin-bottom:.42rem;padding-left:.18rem"><span style="color:'+GOLD+';font-weight:700;font-size:.82rem;line-height:1.65;flex-shrink:0">■</span><span style="font-family:'+T+';font-size:.93rem;color:#0F1929;line-height:1.68">'+line.slice(1).trim()+'</span></div>';}
     else if(line.trim()===""){html+='<div style="height:.28rem"></div>';}
     else{html+='<div style="font-family:'+T+';font-size:.87rem;color:#2D3A50;line-height:1.65;padding-left:.18rem">'+line+'</div>';}
