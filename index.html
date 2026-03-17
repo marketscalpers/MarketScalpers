@@ -109,51 +109,29 @@ footer{background:#0D2B55;border-top:2px solid #D4A017;padding:.45rem 2rem;displ
   <!-- Market Hours — TOP -->
   <div id="market-hours-widget" class="mob-market"></div>
 
-  <!-- ══ INLINE API SETTINGS TAB ══ -->
-  <div id="api-panel" style="background:#0D2B55;border-radius:6px;overflow:hidden;border:1px solid #1E3A5F">
-    <!-- Tab header row -->
-    <div style="display:flex;border-bottom:1px solid #1E3A5F">
-      <div id="tab-anthropic" onclick="switchApiTab('anthropic')"
-        style="flex:1;text-align:center;padding:.42rem .3rem;font-size:.62rem;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:all .15s;color:#D4A017;background:#0A1F3D;border-bottom:2px solid #D4A017">
-        🔵 Anthropic
-      </div>
-      <div id="tab-groq" onclick="switchApiTab('groq')"
-        style="flex:1;text-align:center;padding:.42rem .3rem;font-size:.62rem;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:all .15s;color:#4A7AAB;background:transparent;border-bottom:2px solid transparent">
-        ⚡ Groq API
-      </div>
+  <!-- ══ API KEY PANEL ══ -->
+  <div id="api-panel" style="background:#0D2B55;border-radius:6px;border:1px solid #1E3A5F;padding:.75rem .85rem;display:flex;flex-direction:column;align-items:center;text-align:center">
+    <!-- Header -->
+    <div style="font-size:.58rem;letter-spacing:.16em;color:#D4A017;text-transform:uppercase;font-weight:700;margin-bottom:.18rem">⚡ Groq API Key</div>
+    <div style="font-size:.56rem;color:#4A7AAB;margin-bottom:.55rem">Free at <span style="color:#34D399;font-weight:700">console.groq.com</span> · Required to run analysis</div>
+    <!-- Key input -->
+    <div style="position:relative;width:100%;margin-bottom:.42rem">
+      <input id="groq-key-input" type="password" placeholder="Paste your gsk_ key here"
+        style="width:100%;background:#061425;border:2px solid #1E3A5F;border-radius:4px;padding:.44rem 2.1rem .44rem .65rem;font-family:monospace;font-size:.7rem;color:#E2F0FF;letter-spacing:.03em;transition:border-color .2s;text-align:center"/>
+      <span id="groq-vis-toggle" onclick="toggleGroqVis()" title="Show/Hide"
+        style="position:absolute;right:.45rem;top:50%;transform:translateY(-50%);cursor:pointer;font-size:.76rem;opacity:.55;user-select:none">👁️</span>
     </div>
-
-    <!-- Anthropic panel -->
-    <div id="panel-anthropic" style="padding:.65rem .8rem">
-      <div style="font-size:.68rem;color:#E2F0FF;font-weight:700;margin-bottom:.28rem">Anthropic (Built-in)</div>
-      <div style="font-size:.62rem;color:#4A7AAB;line-height:1.6;margin-bottom:.4rem">Uses shared Claude session.<br>No key required.</div>
-      <div style="background:#166534;border-radius:4px;padding:.28rem .6rem;display:inline-flex;align-items:center;gap:5px">
-        <span style="font-size:.6rem;color:#fff;font-weight:700">✓ Active &amp; Ready</span>
-      </div>
-    </div>
-
-    <!-- Groq panel -->
-    <div id="panel-groq" style="display:none;padding:.65rem .8rem">
-      <div style="font-size:.68rem;color:#E2F0FF;font-weight:700;margin-bottom:.3rem">Groq API Key</div>
-      <div style="font-size:.6rem;color:#4A7AAB;margin-bottom:.38rem">Free at <span style="color:#34D399;font-weight:700">console.groq.com</span></div>
-      <div style="position:relative;margin-bottom:.4rem">
-        <input id="groq-key-input" type="password" placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
-          style="width:100%;background:#061425;border:2px solid #1E3A5F;border-radius:4px;padding:.42rem 2.2rem .42rem .6rem;font-family:monospace;font-size:.72rem;color:#E2F0FF;letter-spacing:.03em;transition:border-color .2s"/>
-        <span id="groq-vis-toggle" onclick="toggleGroqVis()" title="Show/Hide"
-          style="position:absolute;right:.45rem;top:50%;transform:translateY(-50%);cursor:pointer;font-size:.78rem;opacity:.6;user-select:none">👁️</span>
-      </div>
-      <!-- Status bar -->
-      <div id="groq-status" style="display:none;font-size:.65rem;font-weight:700;padding:.28rem .55rem;border-radius:4px;margin-bottom:.4rem"></div>
-      <!-- Validate button — RED by default -->
-      <button id="groq-validate-btn" onclick="validateGroqKey()"
-        style="width:100%;background:#B91C1C;border:none;border-radius:4px;padding:.42rem;font-family:'Times New Roman',serif;font-size:.65rem;font-weight:700;color:#fff;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .3s">
-        Validate Key
-      </button>
-    </div>
+    <!-- Status bar -->
+    <div id="groq-status" style="display:none;font-size:.63rem;font-weight:700;padding:.26rem .55rem;border-radius:4px;margin-bottom:.4rem;width:100%;text-align:center"></div>
+    <!-- Validate button — RED by default, GREEN after validated -->
+    <button id="groq-validate-btn" onclick="validateGroqKey()"
+      style="width:100%;background:#B91C1C;border:none;border-radius:4px;padding:.44rem;font-family:'Times New Roman',serif;font-size:.65rem;font-weight:700;color:#fff;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .3s">
+      Validate Key
+    </button>
   </div>
 
   <!-- API active badge -->
-  <div id="api-badge" class="mob-api-badge" style="font-size:.57rem;color:#6B7A90;font-style:italic;margin-top:-.3rem;text-align:center">🔵 Built-in Anthropic</div>
+  <div id="api-badge" class="mob-api-badge" style="font-size:.57rem;color:#B91C1C;font-style:italic;margin-top:-.3rem;text-align:center">⚠ No API Key — Validate to enable analysis</div>
 
   <!-- Search -->
   <div style="position:relative" class="mob-search">
@@ -278,12 +256,17 @@ var T="'Times New Roman',Times,serif";
 var NAVY="#0D2B55",GOLD="#D4A017",GREEN="#166534",RED="#B91C1C",AMBER="#B8880B";
 
 function updateApiBadge(){
-  var lbl=state.apiMode==="groq"?"⚡ Groq (llama-3.3-70b)":"🔵 Built-in Anthropic";
-  var col=state.apiMode==="groq"?GREEN:"#6B7A90";
+  var validated=(state.keys.groq||"").trim().length>10;
+  var lbl=validated?"⚡ Groq API — Ready":"⚠ No API Key — Validate to enable analysis";
+  var col=validated?GREEN:"#B91C1C";
   var el=document.getElementById("api-badge");
   if(el){el.textContent=lbl;el.style.color=col;}
-  var btn=document.getElementById("settings-btn");
-  if(btn){btn.style.color=state.apiMode==="groq"?GREEN:AMBER;btn.style.borderColor=state.apiMode==="groq"?GREEN+"66":"#C8D4E4";}
+  // Also update run button state
+  var runBtn=document.getElementById("run-btn");
+  if(runBtn){
+    runBtn.disabled=!validated||state.running;
+    if(!validated&&!state.running){runBtn.style.background="#EDF1F8";runBtn.style.borderColor="#C8D4E4";runBtn.style.color="#6B7A90";}
+  }
 }
 
 var FEATURED=["XAUUSD","EURUSD","GBPUSD","USDJPY","BTCUSD","ETHUSD","US30","NAS100","USOIL","XAGUSD"];
@@ -362,7 +345,7 @@ var ALL_TICKERS=(function(){
 
 var CAT_COLORS={"Forex Major":"#0D5C8A","Forex Minor":"#166534","Forex Exotic":"#6D28D9","Metal":"#B8880B","Commodity":"#9A3412","Index":"#0369A1","Crypto":"#7C3AED","Crypto Cross":"#B91C1C"};
 
-var PROMPT="You are an Elite Market Intelligence Agent with live web search access.\n\nCRITICAL RULES:\n1. USE WEB SEARCH to find real current data for EVERY section.\n2. Never use em-dash, asterisk, or double-asterisk in output.\n3. Complete ALL 8 sections without exception.\n4. If a primary source fails use alternatives. Mark N/A only as absolute last resort.\n5. Analyze PAST 24HRS and NEXT 24HRS only.\n\nTICKER: XAUUSD=Gold, XAGUSD=Silver, EURUSD=Euro/USD, GBPUSD=GBP/USD, USDJPY=USD/JPY, AUDUSD=AUD/USD, USDCAD=USD/CAD, BTCUSD=Bitcoin, ETHUSD=Ethereum, SOLUSD=Solana, XRPUSD=XRP, BNBUSD=BNB, USOIL=WTI Crude, US30=Dow Jones, NAS100=Nasdaq100, SPX500=S&P500, GER40=DAX\n\nSOURCES: Investing.com, MarketWatch, Reuters, Bloomberg, CNBC, FXStreet, CoinDesk, CoinTelegraph, ForexFactory (Red Folder ONLY), barchart.com/commitments-of-traders, cmegroup.com, insider-week.com\n\nFOREX FACTORY BACKGROUND PROTOCOL (run silently, do not narrate):\nSTEP 1 - RETRIEVE: Fetch full economic calendar for today from ForexFactory.com. Use ET (Eastern Time) directly with automatic DST adjustment (UTC-4 summer / UTC-5 winter). Do NOT manually convert time.\nSTEP 2 - FILTER: Select High Impact (Red Folder) events. Also include key Medium impact events: CPI, Retail Sales, PMI, GDP if flagged as market-moving.\nSTEP 3 - EXTRACT: For each event collect: Event Name (e.g. NFP, CPI, FOMC Statement), Currency Impacted, Event Time ET (use directly, no conversion).\nSTEP 4 - CLASSIFY TIER: Tier 1 = NFP, CPI, FOMC, Interest Rate Decisions. Tier 2 = GDP, PMI, Employment Data. Tier 3 = Other Red Folder Events.\nSTEP 5 - NO-TRADE WINDOW: Tier 1 = Event Time +/- 90 minutes. Tier 2 = Event Time +/- 60 minutes. Tier 3 = Event Time +/- 30-45 minutes.\nSTEP 6 - MERGE WINDOWS: Merge if events impact same currency OR affect same trading pair (cross-currency). Example: USD event + EUR event = affects EURUSD = merge windows.\nSTEP 7 - TRADING STATUS: 30min before event = CAUTION. During window = BLOCKED. 15-30min after event = WAIT (cooldown). Outside all windows = ALLOWED.\nSTEP 8 - PAIR MAPPING: USD=EURUSD,GBPUSD,USDJPY,XAUUSD,US30,NAS100,SPX500,DXY | EUR=EURUSD,EURGBP,EURJPY | GBP=GBPUSD,GBPJPY | JPY=USDJPY,EURJPY,GBPJPY | AUD=AUDUSD,AUDJPY | CAD=USDCAD,CADJPY | NZD=NZDUSD,NZDJPY | CHF=USDCHF,CHFJPY. Correlated: XAUUSD,US30,NAS100,SPX500,DXY.\nSTEP 9 - SAFETY FILTERS: Flag if spread is abnormally high. Flag if abnormal volatility spike detected. Check event status: Scheduled / Released / Revised.\n\nOUTPUT FORMAT:\n\n## NEWS BRIEF\nBACKEND MODE: Run silently. NO technical data. NO Forex Factory data. NO cross-module interference.\nSTEP 1 - Parse ticker into Base Currency (first) and Quote Currency (second).\nSTEP 2 - Collect news last 48hrs for BOTH currencies independently.\n  Source priority: Tier1=Reuters,Bloomberg | Tier2=CNBC,MarketWatch | Tier3=Investing.com,FXStreet,CoinDesk,CoinTelegraph.\n  Topics: central bank decisions, CPI/PPI, interest rate outlook, GDP, employment, fiscal policy, geopolitical.\n  Strict isolation: NO Forex Factory data. NO technical indicators. NO sharing with other modules.\nSTEP 3 - Clean and deduplicate: remove duplicate headlines, cluster similar events into one (e.g. multiple CPI headlines = one CPI event).\nSTEP 4 - Classify each event:\n  Impact Tier: Tier1(weight=3)=Central Banks/CPI/Rates | Tier2(weight=2)=GDP/Employment/PMI | Tier3(weight=1)=Minor updates.\n  Sentiment: +1=Bullish, -1=Bearish, 0=Neutral (interpret context - inflation may be bullish or bearish depending on rate expectations).\n  Source weight: Tier1=1.0, Tier2=0.8, Tier3=0.5.\n  Time decay: 0-6hrs=1.0, 6-24hrs=0.7, 24-48hrs=0.4.\nSTEP 5 - Calculate currency strength score for each currency:\n  Score = Sum of (Sentiment x ImpactTierWeight x SourceWeight x TimeDecay) for all events.\nSTEP 6 - Net Score = Base Currency Score minus Quote Currency Score.\nSTEP 7 - Pair Sentiment: Net>+1.5=Strong Bullish | +0.5to+1.5=Bullish | -0.5to+0.5=Neutral | -1.5to-0.5=Bearish | Net<-1.5=Strong Bearish.\nSTEP 8 - Output exactly:\nNews 1: [condensed macro headline] (Source)\nNews 2: [condensed macro headline] (Source)\nNews 3: [condensed macro headline] (Source)\nBase Currency Score: [X.XX]\nQuote Currency Score: [X.XX]\nMarket Sentiment: Strong Bullish / Bullish / Neutral / Bearish / Strong Bearish\nOutlook Impact: [one sentence on expected short-term pair movement]\n\n---\n\n## FUNDAMENTAL PROJECTION\\nBACKEND MODE: Use ONLY macroeconomic data. NO technical indicators. NO FF calendar events. NO news. Run silently.\\nSTEP 1 - Identify ticker and split into Base / Quote currencies.\\nSTEP 2 - Analyze Base currency: interest rate outlook, inflation trend, GDP growth, central bank stance, employment.\\nSTEP 3 - Analyze Quote currency: same factors.\\nSTEP 4 - Compare relative strength: Base stronger = Bullish, Quote stronger = Bearish, Equal = Neutral.\\nSTEP 5 - Generate projection for short-to-medium term (days to weeks).\\nOutput exactly:\\nBase Currency Strength: [Strong / Neutral / Weak]\\nQuote Currency Strength: [Strong / Neutral / Weak]\\nInterest Rate Differential: [brief comparison]\\nInflation Outlook: [Base vs Quote trend]\\nCentral Bank Stance: [Hawkish / Neutral / Dovish for each]\\nPrimary Drivers: [2-3 macro factors driving the projection]\\nFundamental Projection: [Bullish / Bearish / Neutral]\\n> Fundamental Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## TECHNICAL PROJECTION\\nBACKEND MODE: Use ONLY price-based technical data. NO news. NO fundamentals. NO FF events. Run silently.\\nSTEP 1 - Identify ticker and timeframes: D1 overall trend, 4H swing structure, 1H intraday bias.\\nSTEP 2 - Determine trend: Bullish / Bearish / Sideways.\\nSTEP 3 - Detect key levels: Major Support, Major Resistance, Liquidity Zones, Previous High/Low.\\nSTEP 4 - Momentum: Moving Average direction, RSI, market structure (HH/HL or LH/LL).\\nSTEP 5 - Project next session directional bias.\\nOutput exactly:\\nTrend Direction: [Bullish / Bearish / Sideways]\\nKey Support: [price]\\nKey Resistance: [price]\\nRSI Reading: [value and signal]\\nMarket Structure: [HH/HL or LH/LL]\\nTechnical Projection: [Bullish continuation / Bearish continuation / Range consolidation / Breakout potential]\\nExpected Movement: [one sentence on projected price behavior]\\n> Technical Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## FOREX FACTORY\\nBACKEND MODE: 9-step engine. Run silently. NO technical data. NO news module data. NO interference with other sections.\\nSTEP 1 - Fetch full ForexFactory.com calendar for today. Use ET directly (auto DST: UTC-4 or UTC-5). Do NOT manually convert time.\\nSTEP 2 - Filter: Strict Mode = Red Folder only. Smart Mode = also include key Orange events (CPI, Retail Sales).\\nSTEP 3 - Extract per event: Event Name, Currency Impacted, Event Time ET.\\nSTEP 4 - Classify event tier:\\n  Tier 1 = NFP, CPI, FOMC, Interest Rate Decisions.\\n  Tier 2 = GDP, PMI, Employment Data.\\n  Tier 3 = Other Red Folder events.\\nSTEP 5 - Dynamic No-Trade Window by tier:\\n  Tier 1 = Event Time plus/minus 90 minutes.\\n  Tier 2 = Event Time plus/minus 60 minutes.\\n  Tier 3 = Event Time plus/minus 30-45 minutes.\\nSTEP 6 - Merge overlapping windows if events impact same currency OR same trading pair (cross-currency). Example: USD event + EUR event both affect EURUSD - merge windows.\\nSTEP 7 - Trading Status Logic (compare current ET time):\\n  30min before event = CAUTION.\\n  Inside event window = BLOCKED.\\n  15-30min after event ends = WAIT (cooldown).\\n  Outside all windows = ALLOWED.\\nSTEP 8 - Currency and Asset Mapping:\\n  USD = EURUSD,GBPUSD,USDJPY,USDCHF,AUDUSD,USDCAD,NZDUSD,XAUUSD,USOIL,US30,NAS100,SPX500,DXY.\\n  EUR = EURUSD,EURGBP,EURJPY,EURCHF,EURAUD,EURCAD,EURNZD.\\n  GBP = GBPUSD,EURGBP,GBPJPY,GBPCHF,GBPAUD,GBPCAD,GBPNZD.\\n  JPY = USDJPY,EURJPY,GBPJPY,AUDJPY,CADJPY,CHFJPY,NZDJPY.\\n  AUD = AUDUSD,EURAUD,GBPAUD,AUDCAD,AUDCHF,AUDJPY,AUDNZD.\\n  CAD = USDCAD,EURCAD,GBPCAD,AUDCAD,CADCHF,CADJPY,NZDCAD.\\n  NZD = NZDUSD,NZDCHF,NZDJPY,AUDNZD,NZDCAD.\\n  CHF = USDCHF,EURCHF,GBPCHF,AUDCHF,CADCHF,CHFJPY.\\n  Correlated assets: XAUUSD, US30, NAS100, SPX500, DXY.\\nSTEP 9 - Safety Filters before ALLOWED status:\\n  Spread condition = flag if abnormally high.\\n  Volatility = flag if abnormal price expansion detected.\\n  Event status = note Scheduled / Released / Revised.\\nOutput each event exactly as:\\nFF_EVENT_START\\nDate: [date ET]\\nEvent: [event name]\\nTier: [1 / 2 / 3]\\nCurrency: [currency]\\nEvent Time: [time ET]\\nNo-Trade Window: [start ET] to [end ET]\\nAffected Pairs: [pairs from mapping]\\nTrading Status: ALLOWED or CAUTION or BLOCKED or WAIT\\nSpread Alert: [Normal / High - avoid]\\nFF_EVENT_END\\nRepeat FF_EVENT_START...FF_EVENT_END for each event.\\nIf no Red Folder events write exactly: NO_RED_FOLDER_EVENTS\n\n---\n\n## BARCHART COT\nBACKEND MODE: 10-step COT engine. Run silently. NO technical price data. NO news. NO FF data. NO interference with other sections.\nSTEP 1 - Parse ticker and map to futures asset:\n  EURUSD=Euro FX Futures | GBPUSD=GBP Futures | AUDUSD=AUD Futures | NZDUSD=NZD Futures.\n  USDJPY=JPY Futures(invert) | USDCAD=CAD Futures(invert) | USDCHF=CHF Futures(invert).\n  XAUUSD=Gold Futures | XAGUSD=Silver Futures | USOIL=Crude Oil Futures | US30=DJIA Futures | NAS100=Nasdaq Futures.\nSTEP 2 - Retrieve from barchart.com/commitments-of-traders. Extract NON-COMMERCIAL (large speculators) data ONLY:\n  Long Contracts, Short Contracts, Net Position (Long-Short), Weekly Net Change (last 3-4 weeks), 52W High Net, 52W Low Net.\nSTEP 3 - Calculate core metrics:\n  Net Position = Long Contracts minus Short Contracts.\n  COT Index = (Current Net minus 52W Low) / (52W High minus 52W Low) x 100. Range 0-100.\n  Momentum (3W) = Average of Net Change over last 3 weeks.\nSTEP 4 - Classify positioning:\n  COT Index 80-100=Extreme Long | 60-80=Bullish | 40-60=Neutral | 20-40=Bearish | 0-20=Extreme Short.\n  Momentum: Strong Positive=Aggressive accumulation | Weak Positive=Mild buying | Neutral=No conviction | Weak Negative=Mild selling | Strong Negative=Aggressive shorting.\nSTEP 5 - Exhaustion detection: IF COT Index > 80 AND Momentum weakening = Potential Top warning. IF COT Index < 20 AND Momentum improving = Potential Bottom warning. Warning only, not reversal trigger.\nSTEP 6 - Divergence detection: IF Price trending up AND COT position decreasing = Bearish Divergence. IF Price trending down AND COT position increasing = Bullish Divergence.\nSTEP 7 - Data freshness: COT released Friday (reflects Tuesday positions). Friday-Monday=Full confidence. Tuesday-Thursday=Reduce signal weight 20-30%.\nSTEP 8 - Apply inversion logic for USD-base pairs: USDJPY JPY Futures bullish = USDJPY bearish. Same for USDCAD, USDCHF.\nSTEP 9 - Generate final bias combining: COT Index + Momentum + Divergence + Freshness. Output: STRONG BULLISH / BULLISH / NEUTRAL / BEARISH / STRONG BEARISH.\nSTEP 10 - Output exactly:\nAsset: [mapped futures asset]\nNet Position: [value]\nCOT Index: [0-100 value]\nMomentum (3W): [Positive / Negative]\nPositioning: [Bullish / Bearish / Neutral / Extreme Long / Extreme Short]\nMomentum Strength: [Strong / Weak]\nDivergence: [Yes - Bullish / Yes - Bearish / No]\nFreshness: [Full confidence / Reduced 20-30%]\n> COT Bias: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\n\n---\n\n## CME GROUP\nBACKEND MODE: 12-step CME order flow engine. Run silently. NO technical price data. NO news. NO FF data. NO interference with other sections.\nSTEP 1 - Parse ticker and map to CME futures contract:\n  EURUSD=Euro FX Futures(direct) | GBPUSD=GBP Futures(direct) | AUDUSD=AUD Futures(direct) | NZDUSD=NZD Futures(direct).\n  USDJPY=JPY Futures(invert) | USDCAD=CAD Futures(invert) | USDCHF=CHF Futures(invert).\n  XAUUSD=Gold Futures | XAGUSD=Silver Futures | USOIL=Crude Oil Futures | US30=DJIA Futures | NAS100=Nasdaq Futures | SPX500=S&P Futures.\nSTEP 2 - Select contract: Use Front-Month Continuous Futures. Detect rollover/expiry periods and ignore abnormal volume spikes from those sessions.\nSTEP 3 - Retrieve from cmegroup.com: Open Interest (OI), OI Change 1-day and 3-day, Volume (current session), Settlement Price, Previous Close.\nSTEP 4 - Normalize metrics:\n  Volume Ratio = Current Volume / 20-Day Average Volume.\n  OI Ratio = Current OI Change / 20-Day Average OI Change.\n  Ratio > 1.2 = Strong participation | 0.8-1.2 = Normal | < 0.8 = Weak participation.\nSTEP 5 - Price direction: Price Change% = (Close minus Previous Close) / Previous Close x 100.\n  > +0.3% = Strong Up | +0.1 to +0.3% = Mild Up | -0.1 to +0.1% = Flat | -0.1 to -0.3% = Mild Down | < -0.3% = Strong Down.\nSTEP 6 - Core order flow interpretation:\n  Price Up + OI Rising + Volume Rising = Long Buildup (Bullish).\n  Price Down + OI Rising + Volume Rising = Short Buildup (Bearish).\n  Price Up + OI Falling + Volume Falling = Short Covering (Weak Bullish).\n  Price Down + OI Falling + Volume Falling = Long Liquidation (Weak Bearish).\nSTEP 7 - Strength validation: IF Volume Ratio > 1.2 AND OI Ratio > 1.2 = Strong Signal. IF Volume Ratio < 0.8 OR OI Ratio < 0.8 = Weak Signal.\nSTEP 8 - Multi-day confirmation: Check last 3 sessions. If same structure appears 2 or more times = Confirmed. Else = Unconfirmed.\nSTEP 9 - Trap and exhaustion detection: IF Price Rising + OI Rising BUT Volume Falling = Weak trend warning. IF sudden reversal after buildup = Potential trap flag.\nSTEP 10 - Apply inversion logic for USD-base pairs: USDJPY JPY Futures Bullish = USDJPY Bearish. Same for USDCAD, USDCHF.\nSTEP 11 - Final bias: Strong buildup confirmed = STRONG BULLISH or STRONG BEARISH. Moderate buildup = BULLISH or BEARISH. Weak or mixed = NEUTRAL.\nSTEP 12 - Output exactly:\nAsset: [mapped futures contract]\nOpen Interest: [value]\nOI Change (1D/3D): [value]\nVolume: [value]\nVolume Ratio: [X.X]\nPrice Change: [X.XX%]\nStructure: [Long Buildup / Short Buildup / Short Covering / Long Liquidation]\nStrength: [Strong / Weak]\nConfirmation: [Confirmed / Unconfirmed]\n> CME Bias: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\n\n---\n\n## SEASONALITY TENDENCY\nBACKEND MODE: 12-step seasonality engine. Run silently. NO technical price data. NO news. NO FF data. NO COT/CME data. NO interference with other sections.\nSTEP 1 - Parse ticker and current system date as anchor point.\nSTEP 2 - Retrieve from insider-week.com. Require minimum 10 years of daily historical data. If data < 10 years automatically downgrade confidence.\nSTEP 3 - Define forward windows: Short-Term = next 5 trading days. Confirmation = next 10 trading days.\nSTEP 4 - Build historical samples: for each past year locate same calendar date and calculate forward returns for both 5-day and 10-day windows.\nSTEP 5 - Clean data: remove outliers (top 5% and bottom 5% of returns). Ensure consistent dataset across all years.\nSTEP 6 - Compute core metrics:\n  Win Rate = % of years price moved in the same direction.\n  Average Return = Mean % move over the window.\n  Consistency = Standard deviation of returns (lower deviation = higher reliability).\n  Recency Weighting: Recent 5 years = weight x1.5. Older years = weight x1.0.\nSTEP 7 - Direction: Average Return > 0 = Bullish. Average Return < 0 = Bearish. Near zero = Neutral.\nSTEP 8 - Strength classification:\n  Strong = Win Rate > 70% AND strong average return.\n  Moderate = Win Rate 55-70%.\n  Weak = Win Rate < 55% OR low average return (treat as Neutral).\nSTEP 9 - Multi-window confirmation: IF 5-Day and 10-Day directions align = increase confidence. IF mismatch = reduce strength to Weak.\nSTEP 10 - Contextual seasonal overlay (secondary, do NOT override core signal):\n  USD = Q4 strength from year-end repatriation flows.\n  JPY = March fiscal year-end flows.\n  AUD/CAD/NZD = commodity demand seasonal cycles.\n  XAUUSD = Q1 demand and pre-central-bank-cycle strength.\n  Used only to slightly adjust confidence level.\nSTEP 11 - Final classification: Strong + aligned windows = STRONG BULLISH or STRONG BEARISH. Moderate = BULLISH or BEARISH. Weak or conflicting = NEUTRAL.\nSTEP 12 - Output exactly:\nAsset: [ticker]\nMonth: [current month]\n5-Day Trend: [Up / Down]\n10-Day Trend: [Up / Down]\nWin Rate: [XX%]\nAverage Return: [X.XX%]\nConsistency: [High / Medium / Low]\nStrength: [Strong / Moderate / Weak]\n> Seasonality Bias: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\n\n---\n\n## MOVEMENT PROJECTION - NEXT 24HRS\n- [Expected price action]\n- [Key price level]\n- [Main catalyst]\n- [Volume/flow signal]\n- [Final directional call]\n\nOVERALL BIAS: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\nPRIMARY DIRECTION: BUY or SELL or WAIT";
+var PROMPT="You are an Elite Market Intelligence Agent with live web search access.\n\nCRITICAL RULES:\n1. USE WEB SEARCH to find real current data for EVERY section.\n2. Never use em-dash, asterisk, or double-asterisk in output.\n3. Complete ALL 8 sections without exception.\n4. If a primary source fails use alternatives. Mark N/A only as absolute last resort.\n5. Analyze PAST 24HRS and NEXT 24HRS only.\n\nTICKER: XAUUSD=Gold, XAGUSD=Silver, EURUSD=Euro/USD, GBPUSD=GBP/USD, USDJPY=USD/JPY, AUDUSD=AUD/USD, USDCAD=USD/CAD, BTCUSD=Bitcoin, ETHUSD=Ethereum, SOLUSD=Solana, XRPUSD=XRP, BNBUSD=BNB, USOIL=WTI Crude, US30=Dow Jones, NAS100=Nasdaq100, SPX500=S&P500, GER40=DAX\n\nSOURCES: Investing.com, MarketWatch, Reuters, Bloomberg, CNBC, FXStreet, CoinDesk, CoinTelegraph, ForexFactory (Red Folder ONLY), barchart.com/commitments-of-traders, cmegroup.com, insider-week.com\n\nFOREX FACTORY BACKGROUND PROTOCOL (run silently, do not narrate):\nSTEP 1 - RETRIEVE: Fetch full economic calendar for today from ForexFactory.com. Use ET (Eastern Time) directly with automatic DST adjustment (UTC-4 summer / UTC-5 winter). Do NOT manually convert time.\nSTEP 2 - FILTER: Select High Impact (Red Folder) events. Also include key Medium impact events: CPI, Retail Sales, PMI, GDP if flagged as market-moving.\nSTEP 3 - EXTRACT: For each event collect: Event Name (e.g. NFP, CPI, FOMC Statement), Currency Impacted, Event Time ET (use directly, no conversion).\nSTEP 4 - CLASSIFY TIER: Tier 1 = NFP, CPI, FOMC, Interest Rate Decisions. Tier 2 = GDP, PMI, Employment Data. Tier 3 = Other Red Folder Events.\nSTEP 5 - NO-TRADE WINDOW: Tier 1 = Event Time +/- 90 minutes. Tier 2 = Event Time +/- 60 minutes. Tier 3 = Event Time +/- 30-45 minutes.\nSTEP 6 - MERGE WINDOWS: Merge if events impact same currency OR affect same trading pair (cross-currency). Example: USD event + EUR event = affects EURUSD = merge windows.\nSTEP 7 - TRADING STATUS: 30min before event = CAUTION. During window = BLOCKED. 15-30min after event = WAIT (cooldown). Outside all windows = ALLOWED.\nSTEP 8 - PAIR MAPPING: USD=EURUSD,GBPUSD,USDJPY,XAUUSD,US30,NAS100,SPX500,DXY | EUR=EURUSD,EURGBP,EURJPY | GBP=GBPUSD,GBPJPY | JPY=USDJPY,EURJPY,GBPJPY | AUD=AUDUSD,AUDJPY | CAD=USDCAD,CADJPY | NZD=NZDUSD,NZDJPY | CHF=USDCHF,CHFJPY. Correlated: XAUUSD,US30,NAS100,SPX500,DXY.\nSTEP 9 - SAFETY FILTERS: Flag if spread is abnormally high. Flag if abnormal volatility spike detected. Check event status: Scheduled / Released / Revised.\n\nOUTPUT FORMAT:\n\n## NEWS BRIEF\nBACKEND MODE: Run silently. NO technical data. NO Forex Factory data. NO cross-module interference.\nSTEP 1 - Parse ticker into Base Currency (first) and Quote Currency (second).\nSTEP 2 - Collect news last 48hrs for BOTH currencies independently.\n  Source priority: Tier1=Reuters,Bloomberg | Tier2=CNBC,MarketWatch | Tier3=Investing.com,FXStreet,CoinDesk,CoinTelegraph.\n  Topics: central bank decisions, CPI/PPI, interest rate outlook, GDP, employment, fiscal policy, geopolitical.\n  Strict isolation: NO Forex Factory data. NO technical indicators. NO sharing with other modules.\nSTEP 3 - Clean and deduplicate: remove duplicate headlines, cluster similar events into one (e.g. multiple CPI headlines = one CPI event).\nSTEP 4 - Classify each event:\n  Impact Tier: Tier1(weight=3)=Central Banks/CPI/Rates | Tier2(weight=2)=GDP/Employment/PMI | Tier3(weight=1)=Minor updates.\n  Sentiment: +1=Bullish, -1=Bearish, 0=Neutral (interpret context - inflation may be bullish or bearish depending on rate expectations).\n  Source weight: Tier1=1.0, Tier2=0.8, Tier3=0.5.\n  Time decay: 0-6hrs=1.0, 6-24hrs=0.7, 24-48hrs=0.4.\nSTEP 5 - Calculate currency strength score for each currency:\n  Score = Sum of (Sentiment x ImpactTierWeight x SourceWeight x TimeDecay) for all events.\nSTEP 6 - Net Score = Base Currency Score minus Quote Currency Score.\nSTEP 7 - Pair Sentiment: Net>+1.5=Strong Bullish | +0.5to+1.5=Bullish | -0.5to+0.5=Neutral | -1.5to-0.5=Bearish | Net<-1.5=Strong Bearish.\nSTEP 8 - Output exactly:\nNews 1: [condensed macro headline] (Source)\nNews 2: [condensed macro headline] (Source)\nNews 3: [condensed macro headline] (Source)\nBase Currency Score: [X.XX]\nQuote Currency Score: [X.XX]\nMarket Sentiment: Strong Bullish / Bullish / Neutral / Bearish / Strong Bearish\nOutlook Impact: [one sentence on expected short-term pair movement]\n\n---\n\n## FUNDAMENTAL PROJECTION\nBACKEND MODE: Use ONLY macroeconomic data. NO technical indicators. NO FF calendar events. NO news. Run silently.\nSTEP 1 - Identify ticker and split into Base / Quote currencies.\nSTEP 2 - Analyze Base currency: interest rate outlook, inflation trend, GDP growth, central bank stance, employment.\nSTEP 3 - Analyze Quote currency: same factors.\nSTEP 4 - Compare relative strength: Base stronger = Bullish, Quote stronger = Bearish, Equal = Neutral.\nSTEP 5 - Generate projection for short-to-medium term (days to weeks).\nOutput exactly:\nBase Currency Strength: [Strong / Neutral / Weak]\nQuote Currency Strength: [Strong / Neutral / Weak]\nInterest Rate Differential: [brief comparison]\nInflation Outlook: [Base vs Quote trend]\nCentral Bank Stance: [Hawkish / Neutral / Dovish for each]\nPrimary Drivers: [2-3 macro factors driving the projection]\nFundamental Projection: [Bullish / Bearish / Neutral]\n> Fundamental Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## TECHNICAL PROJECTION\nBACKEND MODE: Use ONLY price-based technical data. NO news. NO fundamentals. NO FF events. Run silently.\nSTEP 1 - Identify ticker and timeframes: D1 overall trend, 4H swing structure, 1H intraday bias.\nSTEP 2 - Determine trend: Bullish / Bearish / Sideways.\nSTEP 3 - Detect key levels: Major Support, Major Resistance, Liquidity Zones, Previous High/Low.\nSTEP 4 - Momentum: Moving Average direction, RSI, market structure (HH/HL or LH/LL).\nSTEP 5 - Project next session directional bias.\nOutput exactly:\nTrend Direction: [Bullish / Bearish / Sideways]\nKey Support: [price]\nKey Resistance: [price]\nRSI Reading: [value and signal]\nMarket Structure: [HH/HL or LH/LL]\nTechnical Projection: [Bullish continuation / Bearish continuation / Range consolidation / Breakout potential]\nExpected Movement: [one sentence on projected price behavior]\n> Technical Bias: BULLISH or BEARISH or NEUTRAL\n\n---\n\n## FOREX FACTORY\\nBACKEND MODE: 9-step engine. Run silently. NO technical data. NO news module data. NO interference with other sections.\\nSTEP 1 - Fetch full ForexFactory.com calendar for today. Use ET directly (auto DST: UTC-4 or UTC-5). Do NOT manually convert time.\\nSTEP 2 - Filter: Strict Mode = Red Folder only. Smart Mode = also include key Orange events (CPI, Retail Sales).\\nSTEP 3 - Extract per event: Event Name, Currency Impacted, Event Time ET.\\nSTEP 4 - Classify event tier:\\n  Tier 1 = NFP, CPI, FOMC, Interest Rate Decisions.\\n  Tier 2 = GDP, PMI, Employment Data.\\n  Tier 3 = Other Red Folder events.\\nSTEP 5 - Dynamic No-Trade Window by tier:\\n  Tier 1 = Event Time plus/minus 90 minutes.\\n  Tier 2 = Event Time plus/minus 60 minutes.\\n  Tier 3 = Event Time plus/minus 30-45 minutes.\\nSTEP 6 - Merge overlapping windows if events impact same currency OR same trading pair (cross-currency). Example: USD event + EUR event both affect EURUSD - merge windows.\\nSTEP 7 - Trading Status Logic (compare current ET time):\\n  30min before event = CAUTION.\\n  Inside event window = BLOCKED.\\n  15-30min after event ends = WAIT (cooldown).\\n  Outside all windows = ALLOWED.\\nSTEP 8 - Currency and Asset Mapping:\\n  USD = EURUSD,GBPUSD,USDJPY,USDCHF,AUDUSD,USDCAD,NZDUSD,XAUUSD,USOIL,US30,NAS100,SPX500,DXY.\\n  EUR = EURUSD,EURGBP,EURJPY,EURCHF,EURAUD,EURCAD,EURNZD.\\n  GBP = GBPUSD,EURGBP,GBPJPY,GBPCHF,GBPAUD,GBPCAD,GBPNZD.\\n  JPY = USDJPY,EURJPY,GBPJPY,AUDJPY,CADJPY,CHFJPY,NZDJPY.\\n  AUD = AUDUSD,EURAUD,GBPAUD,AUDCAD,AUDCHF,AUDJPY,AUDNZD.\\n  CAD = USDCAD,EURCAD,GBPCAD,AUDCAD,CADCHF,CADJPY,NZDCAD.\\n  NZD = NZDUSD,NZDCHF,NZDJPY,AUDNZD,NZDCAD.\\n  CHF = USDCHF,EURCHF,GBPCHF,AUDCHF,CADCHF,CHFJPY.\\n  Correlated assets: XAUUSD, US30, NAS100, SPX500, DXY.\\nSTEP 9 - Safety Filters before ALLOWED status:\\n  Spread condition = flag if abnormally high.\\n  Volatility = flag if abnormal price expansion detected.\\n  Event status = note Scheduled / Released / Revised.\\nOutput each event exactly as:\\nFF_EVENT_START\\nDate: [date ET]\\nEvent: [event name]\\nTier: [1 / 2 / 3]\\nCurrency: [currency]\\nEvent Time: [time ET]\\nNo-Trade Window: [start ET] to [end ET]\\nAffected Pairs: [pairs from mapping]\\nTrading Status: ALLOWED or CAUTION or BLOCKED or WAIT\\nSpread Alert: [Normal / High - avoid]\\nFF_EVENT_END\\nRepeat FF_EVENT_START...FF_EVENT_END for each event.\\nIf no Red Folder events write exactly: NO_RED_FOLDER_EVENTS\n\n---\n\n## BARCHART COT\nBACKEND MODE: 10-step COT engine. Run silently. NO technical price data. NO news. NO FF data. NO interference with other sections.\nSTEP 1 - Parse ticker and map to futures asset:\n  EURUSD=Euro FX Futures | GBPUSD=GBP Futures | AUDUSD=AUD Futures | NZDUSD=NZD Futures.\n  USDJPY=JPY Futures(invert) | USDCAD=CAD Futures(invert) | USDCHF=CHF Futures(invert).\n  XAUUSD=Gold Futures | XAGUSD=Silver Futures | USOIL=Crude Oil Futures | US30=DJIA Futures | NAS100=Nasdaq Futures.\nSTEP 2 - Retrieve from barchart.com/commitments-of-traders. Extract NON-COMMERCIAL (large speculators) data ONLY:\n  Long Contracts, Short Contracts, Net Position (Long-Short), Weekly Net Change (last 3-4 weeks), 52W High Net, 52W Low Net.\nSTEP 3 - Calculate core metrics:\n  Net Position = Long Contracts minus Short Contracts.\n  COT Index = (Current Net minus 52W Low) / (52W High minus 52W Low) x 100. Range 0-100.\n  Momentum (3W) = Average of Net Change over last 3 weeks.\nSTEP 4 - Classify positioning:\n  COT Index 80-100=Extreme Long | 60-80=Bullish | 40-60=Neutral | 20-40=Bearish | 0-20=Extreme Short.\n  Momentum: Strong Positive=Aggressive accumulation | Weak Positive=Mild buying | Neutral=No conviction | Weak Negative=Mild selling | Strong Negative=Aggressive shorting.\nSTEP 5 - Exhaustion detection: IF COT Index > 80 AND Momentum weakening = Potential Top warning. IF COT Index < 20 AND Momentum improving = Potential Bottom warning. Warning only, not reversal trigger.\nSTEP 6 - Divergence detection: IF Price trending up AND COT position decreasing = Bearish Divergence. IF Price trending down AND COT position increasing = Bullish Divergence.\nSTEP 7 - Data freshness: COT released Friday (reflects Tuesday positions). Friday-Monday=Full confidence. Tuesday-Thursday=Reduce signal weight 20-30%.\nSTEP 8 - Apply inversion logic for USD-base pairs: USDJPY JPY Futures bullish = USDJPY bearish. Same for USDCAD, USDCHF.\nSTEP 9 - Generate final bias combining: COT Index + Momentum + Divergence + Freshness. Output: STRONG BULLISH / BULLISH / NEUTRAL / BEARISH / STRONG BEARISH.\nSTEP 10 - Output exactly:\nAsset: [mapped futures asset]\nNet Position: [value]\nCOT Index: [0-100 value]\nMomentum (3W): [Positive / Negative]\nPositioning: [Bullish / Bearish / Neutral / Extreme Long / Extreme Short]\nMomentum Strength: [Strong / Weak]\nDivergence: [Yes - Bullish / Yes - Bearish / No]\nFreshness: [Full confidence / Reduced 20-30%]\n> COT Bias: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\n\n---\n\n## CME GROUP\nBACKEND MODE: 12-step CME order flow engine. Run silently. NO technical price data. NO news. NO FF data. NO interference with other sections.\nSTEP 1 - Parse ticker and map to CME futures contract:\n  EURUSD=Euro FX Futures(direct) | GBPUSD=GBP Futures(direct) | AUDUSD=AUD Futures(direct) | NZDUSD=NZD Futures(direct).\n  USDJPY=JPY Futures(invert) | USDCAD=CAD Futures(invert) | USDCHF=CHF Futures(invert).\n  XAUUSD=Gold Futures | XAGUSD=Silver Futures | USOIL=Crude Oil Futures | US30=DJIA Futures | NAS100=Nasdaq Futures | SPX500=S&P Futures.\nSTEP 2 - Select contract: Use Front-Month Continuous Futures. Detect rollover/expiry periods and ignore abnormal volume spikes from those sessions.\nSTEP 3 - Retrieve from cmegroup.com: Open Interest (OI), OI Change 1-day and 3-day, Volume (current session), Settlement Price, Previous Close.\nSTEP 4 - Normalize metrics:\n  Volume Ratio = Current Volume / 20-Day Average Volume.\n  OI Ratio = Current OI Change / 20-Day Average OI Change.\n  Ratio > 1.2 = Strong participation | 0.8-1.2 = Normal | < 0.8 = Weak participation.\nSTEP 5 - Price direction: Price Change% = (Close minus Previous Close) / Previous Close x 100.\n  > +0.3% = Strong Up | +0.1 to +0.3% = Mild Up | -0.1 to +0.1% = Flat | -0.1 to -0.3% = Mild Down | < -0.3% = Strong Down.\nSTEP 6 - Core order flow interpretation:\n  Price Up + OI Rising + Volume Rising = Long Buildup (Bullish).\n  Price Down + OI Rising + Volume Rising = Short Buildup (Bearish).\n  Price Up + OI Falling + Volume Falling = Short Covering (Weak Bullish).\n  Price Down + OI Falling + Volume Falling = Long Liquidation (Weak Bearish).\nSTEP 7 - Strength validation: IF Volume Ratio > 1.2 AND OI Ratio > 1.2 = Strong Signal. IF Volume Ratio < 0.8 OR OI Ratio < 0.8 = Weak Signal.\nSTEP 8 - Multi-day confirmation: Check last 3 sessions. If same structure appears 2 or more times = Confirmed. Else = Unconfirmed.\nSTEP 9 - Trap and exhaustion detection: IF Price Rising + OI Rising BUT Volume Falling = Weak trend warning. IF sudden reversal after buildup = Potential trap flag.\nSTEP 10 - Apply inversion logic for USD-base pairs: USDJPY JPY Futures Bullish = USDJPY Bearish. Same for USDCAD, USDCHF.\nSTEP 11 - Final bias: Strong buildup confirmed = STRONG BULLISH or STRONG BEARISH. Moderate buildup = BULLISH or BEARISH. Weak or mixed = NEUTRAL.\nSTEP 12 - Output exactly:\nAsset: [mapped futures contract]\nOpen Interest: [value]\nOI Change (1D/3D): [value]\nVolume: [value]\nVolume Ratio: [X.X]\nPrice Change: [X.XX%]\nStructure: [Long Buildup / Short Buildup / Short Covering / Long Liquidation]\nStrength: [Strong / Weak]\nConfirmation: [Confirmed / Unconfirmed]\n> CME Bias: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\n\n---\n\n## SEASONALITY TENDENCY\nBACKEND MODE: 12-step seasonality engine. Run silently. NO technical price data. NO news. NO FF data. NO COT/CME data. NO interference with other sections.\nSTEP 1 - Parse ticker and current system date as anchor point.\nSTEP 2 - Retrieve from insider-week.com. Require minimum 10 years of daily historical data. If data < 10 years automatically downgrade confidence.\nSTEP 3 - Define forward windows: Short-Term = next 5 trading days. Confirmation = next 10 trading days.\nSTEP 4 - Build historical samples: for each past year locate same calendar date and calculate forward returns for both 5-day and 10-day windows.\nSTEP 5 - Clean data: remove outliers (top 5% and bottom 5% of returns). Ensure consistent dataset across all years.\nSTEP 6 - Compute core metrics:\n  Win Rate = % of years price moved in the same direction.\n  Average Return = Mean % move over the window.\n  Consistency = Standard deviation of returns (lower deviation = higher reliability).\n  Recency Weighting: Recent 5 years = weight x1.5. Older years = weight x1.0.\nSTEP 7 - Direction: Average Return > 0 = Bullish. Average Return < 0 = Bearish. Near zero = Neutral.\nSTEP 8 - Strength classification:\n  Strong = Win Rate > 70% AND strong average return.\n  Moderate = Win Rate 55-70%.\n  Weak = Win Rate < 55% OR low average return (treat as Neutral).\nSTEP 9 - Multi-window confirmation: IF 5-Day and 10-Day directions align = increase confidence. IF mismatch = reduce strength to Weak.\nSTEP 10 - Contextual seasonal overlay (secondary, do NOT override core signal):\n  USD = Q4 strength from year-end repatriation flows.\n  JPY = March fiscal year-end flows.\n  AUD/CAD/NZD = commodity demand seasonal cycles.\n  XAUUSD = Q1 demand and pre-central-bank-cycle strength.\n  Used only to slightly adjust confidence level.\nSTEP 11 - Final classification: Strong + aligned windows = STRONG BULLISH or STRONG BEARISH. Moderate = BULLISH or BEARISH. Weak or conflicting = NEUTRAL.\nSTEP 12 - Output exactly:\nAsset: [ticker]\nMonth: [current month]\n5-Day Trend: [Up / Down]\n10-Day Trend: [Up / Down]\nWin Rate: [XX%]\nAverage Return: [X.XX%]\nConsistency: [High / Medium / Low]\nStrength: [Strong / Moderate / Weak]\n> Seasonality Bias: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\n\n---\n\n## MOVEMENT PROJECTION - NEXT 24HRS\n- [Expected price action]\n- [Key price level]\n- [Main catalyst]\n- [Volume/flow signal]\n- [Final directional call]\n\nOVERALL BIAS: STRONG BULLISH or BULLISH or NEUTRAL or BEARISH or STRONG BEARISH\nPRIMARY DIRECTION: BUY or SELL or WAIT";
 
 var PIPE_STAGES=[
   {id:"news",icon:"📰",label:"News Sentiment Analysis",accent:"#9A6E00",steps:["Connecting to Investing.com...","Fetching MarketWatch and Reuters...","Pulling FXStreet and CNBC...","Classifying sentiment...","Tagging high-impact stories..."]},
@@ -653,29 +636,11 @@ function buildMarketHours(){
 
 
 // SETTINGS
-// ── INLINE API PANEL ──────────────────────────────────────────
-var currentApiTab = "anthropic";
+// ── API KEY PANEL ──────────────────────────────────────────
+// Groq-only mode — analysis blocked until key is validated
+state.apiMode = "groq";
 
-function switchApiTab(tab){
-  currentApiTab = tab;
-  // tab headers
-  var tA = document.getElementById("tab-anthropic");
-  var tG = document.getElementById("tab-groq");
-  if(tab==="anthropic"){
-    tA.style.color="#D4A017"; tA.style.background="#0A1F3D"; tA.style.borderBottomColor="#D4A017";
-    tG.style.color="#4A7AAB"; tG.style.background="transparent"; tG.style.borderBottomColor="transparent";
-    document.getElementById("panel-anthropic").style.display="block";
-    document.getElementById("panel-groq").style.display="none";
-    // Switch state to anthropic
-    state.apiMode="anthropic";
-    updateApiBadge();
-  } else {
-    tG.style.color="#34D399"; tG.style.background="#0A1F3D"; tG.style.borderBottomColor="#34D399";
-    tA.style.color="#4A7AAB"; tA.style.background="transparent"; tA.style.borderBottomColor="transparent";
-    document.getElementById("panel-groq").style.display="block";
-    document.getElementById("panel-anthropic").style.display="none";
-  }
-}
+function switchApiTab(tab){ /* no-op — single panel mode */ }
 
 function toggleGroqVis(){
   var inp = document.getElementById("groq-key-input");
@@ -711,17 +676,18 @@ function validateGroqKey(){
     if(r.ok){
       // GREEN button
       btn.style.background="#166534"; btn.textContent="✓ Validated";
-      setGroqStatus("Groq key verified successfully!", true);
+      setGroqStatus("✓ Key validated — analysis enabled.", true);
       state.keys.groq = key;
       state.apiMode = "groq";
       updateApiBadge();
     } else if(r.status===401||r.status===403){
       btn.style.background="#B91C1C"; btn.textContent="Validate Key";
-      setGroqStatus("Invalid key - rejected by Groq. Check console.groq.com", false);
+      state.keys.groq=""; updateApiBadge();
+      setGroqStatus("✗ Invalid key — rejected by Groq. Check console.groq.com", false);
     } else if(r.status===429){
       // rate limited but key is valid
       btn.style.background="#166534"; btn.textContent="✓ Validated";
-      setGroqStatus("Key valid (rate-limited). Ready to use.", true);
+      setGroqStatus("✓ Key validated — analysis enabled.", true);
       state.keys.groq = key;
       state.apiMode = "groq";
       updateApiBadge();
@@ -741,6 +707,8 @@ function validateGroqKey(){
 function initApiPanel(){
   var inp = document.getElementById("groq-key-input");
   if(inp) inp.value = "";
+  // Ensure run button is locked on load
+  updateApiBadge();
 }
 
 // Clipboard paste auto-fill: when user clicks copy anywhere, check clipboard and paste into Groq input
@@ -769,30 +737,54 @@ function hideSettingsStatus(){ setGroqStatus("", true, true); }
 
 function parseSignals(text){
   var lines=text.split("\n");
-  var out={fundamental:null,technical:null,cotBias:null,cmeBias:null,seasonBias:null,hasRedFolder:false,noTradeWindows:[],overall:null,direction:null};
+  var out={fundamental:null,technical:null,cotBias:null,cmeBias:null,seasonBias:null,newsSentiment:null,hasRedFolder:false,noTradeWindows:[],overall:null,direction:null};
   var inFF=false;
   function eb(s){var u=s.toUpperCase();if(u.includes("STRONG BULLISH"))return"STRONG BULLISH";if(u.includes("STRONG BEARISH"))return"STRONG BEARISH";if(u.includes("BULLISH"))return"BULLISH";if(u.includes("BEARISH"))return"BEARISH";if(u.includes("NEUTRAL"))return"NEUTRAL";return null;}
+  function kv(line,key){var u=line.toUpperCase();var k=key.toUpperCase();if(u.startsWith(k)){return line.slice(key.length).replace(/^[:\s]+/,"").trim();}return null;}
   for(var i=0;i<lines.length;i++){
     var line=lines[i].trim();
-    if(line.includes("FOREX FACTORY")||line.includes("TABLE_FF"))inFF=true;
-    else if(line.startsWith("##")||line==="---")inFF=false;
+    // FF block detection
+    if(line==="FF_EVENT_START"){inFF=true;}
+    if(line==="FF_EVENT_END"){inFF=false;}
+    if(line.includes("## FOREX FACTORY")||line.includes("TABLE_FF"))inFF=true;
+    else if(line.startsWith("##")&&!line.includes("FOREX FACTORY"))inFF=false;
+    // ── Bias lines ("> Bias:" format) ──
     if(line.startsWith(">")&&line.toUpperCase().includes("FUNDAMENTAL BIAS"))out.fundamental=eb(line);
     if(line.startsWith(">")&&line.toUpperCase().includes("TECHNICAL BIAS"))out.technical=eb(line);
     if(line.startsWith(">")&&line.toUpperCase().includes("COT BIAS"))out.cotBias=eb(line);
     if(line.startsWith(">")&&line.toUpperCase().includes("CME BIAS"))out.cmeBias=eb(line);
     if(line.startsWith(">")&&line.toUpperCase().includes("SEASONALITY BIAS"))out.seasonBias=eb(line);
-    // Detect FF_EVENT blocks (new format)
-    if(line.trim()==="FF_EVENT_START"){inFF=true;}
+    // ── Structured key:value fallbacks ──
+    var v;
+    // Fundamental: "Fundamental Projection: Bullish" or "Fundamental Bias: Bullish"
+    v=kv(line,"Fundamental Projection:")||kv(line,"Fundamental Bias:");
+    if(v&&!out.fundamental)out.fundamental=eb(v);
+    // Technical: "Technical Projection: Bullish continuation" or "Technical Bias:"
+    v=kv(line,"Technical Projection:")||kv(line,"Technical Bias:");
+    if(v&&!out.technical)out.technical=eb(v);
+    // COT: "COT Bias: BULLISH" (key:value without >)
+    v=kv(line,"COT Bias:");
+    if(v&&!out.cotBias)out.cotBias=eb(v);
+    // CME: "CME Bias: BULLISH"
+    v=kv(line,"CME Bias:");
+    if(v&&!out.cmeBias)out.cmeBias=eb(v);
+    // Seasonality: "Seasonality Bias: BULLISH"
+    v=kv(line,"Seasonality Bias:");
+    if(v&&!out.seasonBias)out.seasonBias=eb(v);
+    // News: "Market Sentiment: Bullish"
+    v=kv(line,"Market Sentiment:");
+    if(v&&!out.newsSentiment)out.newsSentiment=eb(v);
+    // ── FF event data ──
     if(inFF&&line.startsWith("No-Trade Window:")){
       out.hasRedFolder=true;
       var win=line.replace("No-Trade Window:","").trim();
-      if(win)out.noTradeWindows.push(win);
+      if(win&&out.noTradeWindows.indexOf(win)===-1)out.noTradeWindows.push(win);
     }
-    if(inFF&&line.startsWith("Trading Status:")&&line.toUpperCase().includes("BLOCKED")){
-      out.hasRedFolder=true;
+    if(inFF&&line.startsWith("Trading Status:")){
+      var ts=line.toUpperCase();
+      if(ts.includes("BLOCKED")||ts.includes("CAUTION"))out.hasRedFolder=true;
     }
-    if(line.trim()==="FF_EVENT_END"){inFF=false;}
-    // Legacy TABLE_FF format fallback
+    // Legacy TABLE_FF
     if(inFF&&line.includes("|")&&!line.toLowerCase().includes("commodity")&&!line.includes("TABLE_")){
       if(!line.toUpperCase().includes("NO_RED")){out.hasRedFolder=true;var pts=line.split("|").map(function(p){return p.trim();});if(pts.length>=7&&pts[6]&&pts[6].includes("to"))out.noTradeWindows.push(pts[6]);}
     }
@@ -809,7 +801,7 @@ function bCol(b){if(!b)return"#6B7A90";if(b.includes("BULLISH"))return GREEN;if(
 function openSummary(){
   if(!state.summarySignals)return;
   var sig=state.summarySignals,ticker=state.currentTicker;
-  var biases=[sig.fundamental,sig.technical,sig.cotBias,sig.cmeBias,sig.seasonBias].filter(Boolean);
+  var biases=[sig.newsSentiment,sig.fundamental,sig.technical,sig.cotBias,sig.cmeBias,sig.seasonBias].filter(Boolean);
   var allBull=biases.length>0&&biases.every(function(b){return b.includes("BULLISH");});
   var allBear=biases.length>0&&biases.every(function(b){return b.includes("BEARISH");});
   var unanimous=allBull||allBear;
@@ -817,10 +809,11 @@ function openSummary(){
   var finalCol=sig.hasRedFolder?RED:unanimous?(allBull?GREEN:RED):AMBER;
   var finalTitle=sig.hasRedFolder?"NO TRADE - High Impact Event":unanimous?(allBull?"BULLISH CONFLUENCE - TRADE VALID":"BEARISH CONFLUENCE - TRADE VALID"):"MIXED SIGNALS - No Confluence";
   var rows=[
+    {label:"News Sentiment",sub:"Weighted macro news score (48hr)",val:sig.newsSentiment,icon:"📰"},
     {label:"Fundamental",sub:"Macro and policy bias",val:sig.fundamental,icon:"📊"},
     {label:"Technical",sub:"Price structure and indicators",val:sig.technical,icon:"📈"},
     {label:"COT - BarChart",sub:"Institutional positioning",val:sig.cotBias,icon:"📉"},
-    {label:"CME Group",sub:"Futures open interest signal",val:sig.cmeBias,icon:"🏦"},
+    {label:"CME Group",sub:"Futures order flow signal",val:sig.cmeBias,icon:"🏦"},
     {label:"Seasonality",sub:"Historical 5-day seasonal trend",val:sig.seasonBias,icon:"📅"},
   ];
   var rowsHtml=rows.map(function(r){
@@ -1084,7 +1077,7 @@ function callApi(sym){
   var nyStr=nyNow.toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"})+" "+pad2(nyNow.getHours())+":"+pad2(nyNow.getMinutes())+" ET (UTC-4, New York)";
   var userPrompt="Analyze ticker: "+sym+". Current date/time: "+nyStr+". Use UTC-4 Eastern Time (New York) for ALL time references including Forex Factory events, no-trade windows, market open/close times, and news timestamps. Use web search for current real data. Complete ALL 8 sections.";
   var p;
-  if(state.apiMode==="groq"&&(state.keys.groq||"").trim().length>10){
+  if((state.keys.groq||"").trim().length>10){
     p=fetch("https://api.groq.com/openai/v1/chat/completions",{
       method:"POST",
       headers:{"Content-Type":"application/json","Authorization":"Bearer "+(state.keys.groq||"").trim()},
@@ -1098,21 +1091,8 @@ function callApi(sym){
       return full;
     });
   } else {
-    // Built-in Anthropic
-    p=fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:6000,system:PROMPT,
-        tools:[{type:"web_search_20250305",name:"web_search",max_uses:5}],
-        messages:[{role:"user",content:userPrompt}]})
-    })
-    .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error("HTTP "+r.status+": "+t);});return r.json();})
-    .then(function(d){
-      if(d.error)throw new Error(d.error.message||"API error");
-      var blocks=d.content||[];var parts=[];
-      for(var i=0;i<blocks.length;i++)if(blocks[i].type==="text"&&blocks[i].text)parts.push(blocks[i].text);
-      return parts.join("\n");
-    });
+    // No valid key — should never reach here due to guard in runAnalysis
+    p=Promise.reject(new Error("No valid Groq API key. Please paste and validate your key."));
   }
   p.then(function(full){
     full=(full||"").replace(/\u2014/g,"-").replace(/\*\*/g,"").replace(/\*/g,"");
@@ -1212,9 +1192,10 @@ function runTicker(sym){
 function runAnalysis(){
   var v=symInput.value.trim();
   if(!v){symInput.focus();return;}
-  if(state.apiMode==="groq"&&!(state.keys.groq||"").trim()){
-    switchApiTab("groq");
-    setGroqStatus("Please paste and validate your Groq key first.",false);
+  // STRICT: block analysis if no validated Groq key
+  if(!(state.keys.groq||"").trim()||state.keys.groq.length<10){
+    setGroqStatus("⚠ Paste and validate your Groq API key first.",false);
+    document.getElementById("groq-key-input").focus();
     return;
   }
   runTicker(v);
