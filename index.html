@@ -145,7 +145,7 @@ footer{background:#0D2B55;border-top:2px solid #D4A017;padding:.45rem 2rem;displ
     <div id="suggest-drop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:9000;background:#fff;border:1px solid #C8D4E4;border-top:2px solid #0D2B55;border-radius:0 0 6px 6px;box-shadow:0 8px 24px rgba(13,43,85,.15);max-height:300px;overflow-y:auto;margin-top:1px"></div>
   </div>
 
-  <button class="btn-primary mob-run" id="run-btn" onclick="runAnalysis()">Run Analysis</button>
+  <button class="btn-primary mob-run" id="run-btn" onclick="runAnalysis()" disabled style="background:#EDF1F8;border-color:#C8D4E4;color:#9AAEC8;cursor:not-allowed">Run Analysis</button>
 
   <!-- Popular -->
   <div class="mob-popular">
@@ -261,12 +261,37 @@ function updateApiBadge(){
   var col=validated?GREEN:"#B91C1C";
   var el=document.getElementById("api-badge");
   if(el){el.textContent=lbl;el.style.color=col;}
-  // Also update run button state
+  // Run button
   var runBtn=document.getElementById("run-btn");
   if(runBtn){
     runBtn.disabled=!validated||state.running;
-    if(!validated&&!state.running){runBtn.style.background="#EDF1F8";runBtn.style.borderColor="#C8D4E4";runBtn.style.color="#6B7A90";}
+    runBtn.style.background=(!validated||state.running)?"#EDF1F8":NAVY;
+    runBtn.style.borderColor=(!validated||state.running)?"#C8D4E4":NAVY;
+    runBtn.style.color=(!validated||state.running)?"#9AAEC8":"#fff";
+    runBtn.style.cursor=(!validated||state.running)?"not-allowed":"pointer";
   }
+  // Sym input — lock/unlock
+  var inp=document.getElementById("sym-input");
+  if(inp){
+    inp.disabled=!validated;
+    inp.style.background=validated?"#fff":"#F6F8FC";
+    inp.style.color=validated?NAVY:"#9AAEC8";
+    inp.placeholder=validated?"Type ticker or name... e.g. EUR, Gold, BTC":"Validate API key to search tickers";
+  }
+  // Chip buttons — lock/unlock
+  var chips=document.querySelectorAll(".chip");
+  chips.forEach(function(ch){
+    ch.disabled=!validated;
+    ch.style.opacity=validated?"1":"0.4";
+    ch.style.cursor=validated?"pointer":"not-allowed";
+  });
+  // Welcome screen chips
+  var wchips=document.querySelectorAll("#welcome-chips button");
+  wchips.forEach(function(ch){
+    ch.disabled=!validated;
+    ch.style.opacity=validated?"1":"0.4";
+    ch.style.cursor=validated?"pointer":"not-allowed";
+  });
 }
 
 var FEATURED=["XAUUSD","EURUSD","GBPUSD","USDJPY","BTCUSD","ETHUSD","US30","NAS100","USOIL","XAGUSD"];
@@ -412,7 +437,7 @@ function makeChip(sym,container,small){
   b.className="chip";
   b.textContent=sym;
   b.style.cssText="background:#fff;border:1px solid #C8D4E4;border-radius:3px;padding:"+(small?".16rem .38rem":".4rem .78rem")+";font-family:"+T+";font-size:"+(small?".67rem":".78rem")+";font-weight:700;color:#2D3A50;cursor:pointer;letter-spacing:.04em;transition:all .15s";
-  b.onclick=function(){runTicker(sym);};
+  b.onclick=function(){if(!isKeyReady())return;runTicker(sym);};
   container.appendChild(b);
 }
 FEATURED.forEach(function(t){
@@ -468,7 +493,7 @@ function renderSuggest(){
   });
   sugDrop.style.display="block";
 }
-function selectSug(t){symInput.value=t.s;document.getElementById("input-clear").style.display="inline";closeSuggest();runTicker(t.s);symInput.value="";}
+function selectSug(t){if(!isKeyReady())return;symInput.value=t.s;document.getElementById("input-clear").style.display="inline";closeSuggest();runTicker(t.s);symInput.value="";}
 function clearInput(){symInput.value="";document.getElementById("input-clear").style.display="none";closeSuggest();state.suggestions=[];}
 
 // LIVE PRICES
@@ -1171,8 +1196,26 @@ function renderHistory(){
 }
 
 // MAIN RUN
+function isKeyReady(){
+  if(!(state.keys.groq||"").trim()||state.keys.groq.length<10){
+    // Flash the key input and show warning
+    var inp=document.getElementById("groq-key-input");
+    var btn=document.getElementById("groq-validate-btn");
+    if(inp){
+      inp.style.borderColor="#B91C1C";
+      inp.focus();
+      setTimeout(function(){inp.style.borderColor="#1E3A5F";},1800);
+    }
+    setGroqStatus("⚠ Paste your Groq API key and click Validate to enable analysis.",false);
+    document.getElementById("groq-status").style.display="block";
+    return false;
+  }
+  return true;
+}
+
 function runTicker(sym){
   if(!sym||state.running)return;
+  if(!isKeyReady())return;
   sym=sym.trim().toUpperCase();
   symInput.value="";
   document.getElementById("input-clear").style.display="none";
@@ -1190,17 +1233,12 @@ function runTicker(sym){
   callApi(sym);
 }
 function runAnalysis(){
+  if(!isKeyReady())return;
   var v=symInput.value.trim();
   if(!v){symInput.focus();return;}
-  // STRICT: block analysis if no validated Groq key
-  if(!(state.keys.groq||"").trim()||state.keys.groq.length<10){
-    setGroqStatus("⚠ Paste and validate your Groq API key first.",false);
-    document.getElementById("groq-key-input").focus();
-    return;
-  }
   runTicker(v);
 }
-symInput.addEventListener("keydown",function(e){if(e.key==="Enter"&&!sugDrop.querySelector(".suggest-item:hover"))runAnalysis();});
+symInput.addEventListener("keydown",function(e){if(e.key==="Enter"&&!sugDrop.querySelector(".suggest-item:hover")){if(!isKeyReady())return;runAnalysis();}});
 </script>
 </body>
 </html>
