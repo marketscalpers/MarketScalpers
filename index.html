@@ -535,8 +535,8 @@ var FH_MAP = {
   USDNOK:"OANDA:USD_NOK", USDSEK:"OANDA:USD_SEK", USDDKK:"OANDA:USD_DKK",
   USDSGD:"OANDA:USD_SGD", USDHKD:"OANDA:USD_HKD", USDINR:"OANDA:USD_INR",
   USDPLN:"OANDA:USD_PLN", USDCNH:"OANDA:USD_CNH",
-  XAUUSD:"OANDA:XAU_USD", XAGUSD:"OANDA:XAG_USD",
-  XPTUSD:"OANDA:XPT_USD", XPDUSD:"OANDA:XPD_USD",
+  XAUUSD:"YF:GC=F", XAGUSD:"YF:SI=F",
+  XPTUSD:"YF:PL=F", XPDUSD:"YF:PA=F",
   BTCUSD:"BINANCE:BTCUSDT", ETHUSD:"BINANCE:ETHUSDT", BNBUSD:"BINANCE:BNBUSDT",
   SOLUSD:"BINANCE:SOLUSDT", XRPUSD:"BINANCE:XRPUSDT", ADAUSD:"BINANCE:ADAUSDT",
   AVAXUSD:"BINANCE:AVAXUSDT", DOTUSD:"BINANCE:DOTUSDT", DOGEUSD:"BINANCE:DOGEUSDT",
@@ -549,7 +549,7 @@ var FH_MAP = {
   MKRUSD:"BINANCE:MKRUSDT", ETCUSD:"BINANCE:ETCUSDT", DASHUSD:"BINANCE:DASHUSDT",
   ETHBTC:"BINANCE:ETHBTC", BNBBTC:"BINANCE:BNBBTC", SOLBTC:"BINANCE:SOLBTC",
   XRPBTC:"BINANCE:XRPBTC",
-  USOIL:"OANDA:BCO_USD",
+  USOIL:"YF:CL=F",
   US30:"YF:YM=F", NAS100:"YF:NQ=F", SPX500:"YF:ES=F",
   UK100:"YF:^FTSE", GER40:"YF:^GDAXI", FRA40:"YF:^FCHI",
   JPN225:"YF:^N225", HK50:"YF:^HSI", AUS200:"YF:^AXJO", VIX:"YF:^VIX",
@@ -592,28 +592,92 @@ function fetchFinnhub(fhSym, sym){
       if(!d || !d.c || d.c === 0) return;
       var price = d.c;
       var chg = d.dp !== undefined ? d.dp : (d.pc ? ((d.c - d.pc) / d.pc * 100) : 0);
-      state.livePrices[sym] = { price: price, chg: chg, src: "Finnhub" };
-      renderPriceStrip();
+      storeLivePrice(sym, price, chg, "Finnhub");
     })
     .catch(function(){ fetchYahooFallback(sym); });
+}
+
+// Sanity bounds per asset type - reject clearly wrong prices
+var PRICE_BOUNDS = {
+  XAUUSD:{min:500,max:15000}, XAGUSD:{min:5,max:500},
+  XPTUSD:{min:200,max:5000},  XPDUSD:{min:200,max:5000},
+  USOIL:{min:5,max:500},      UKOIL:{min:5,max:500},
+  US30:{min:5000,max:100000}, NAS100:{min:1000,max:100000},
+  SPX500:{min:500,max:20000}, UK100:{min:1000,max:50000},
+  GER40:{min:1000,max:50000}, JPN225:{min:5000,max:100000},
+  NGAS:{min:0.5,max:50},      COPPER:{min:0.5,max:30},
+};
+
+function isValidPrice(sym, price){
+  if(!price || price <= 0 || isNaN(price)) return false;
+  var bounds = PRICE_BOUNDS[sym];
+  if(!bounds) return true; // no bounds defined, accept
+  return price >= bounds.min && price <= bounds.max;
+}
+
+function storeLivePrice(sym, price, chg, src){
+  if(!isValidPrice(sym, price)){
+    console.warn("Nykash: rejected price for " + sym + ": " + price + " (out of bounds)");
+    return false;
+  }
+  state.livePrices[sym] = {price:price, chg:chg||0, src:src};
+  renderPriceStrip();
+  return true;
+}
+
+function fetchYahooV8(sym, ySym){
+  fetch("https://query1.finance.yahoo.com/v8/finance/chart/" + encodeURIComponent(ySym) + "?interval=1m&range=1d")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var meta = d && d.chart && d.chart.result && d.chart.result[0] && d.chart.result[0].meta;
+      if(!meta || !meta.regularMarketPrice) return;
+      var prev = meta.chartPreviousClose || meta.previousClose || meta.regularMarketPrice;
+      var chg = prev ? ((meta.regularMarketPrice - prev) / prev * 100) : 0;
+      storeLivePrice(sym, meta.regularMarketPrice, chg, "Yahoo");
+    }).catch(function(){});
 }
 
 function fetchYahooFallback(sym){
   var fhEntry = FH_MAP[sym];
   if(!fhEntry || !fhEntry.startsWith("YF:")) return;
   var ySym = fhEntry.slice(3);
-  fetch("https://query2.finance.yahoo.com/v7/finance/quote?symbols=" + encodeURIComponent(ySym))
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var q = d && d.quoteResponse && d.quoteResponse.result && d.quoteResponse.result[0];
-      if(!q || !q.regularMarketPrice) return;
-      state.livePrices[sym] = {
-        price: q.regularMarketPrice,
-        chg: q.regularMarketChangePercent || 0,
-        src: "Yahoo"
-      };
-      renderPriceStrip();
-    }).catch(function(){});
+
+  // For Gold: try both GC=F and XAUUSD=X (spot) as backup
+  var altSyms = {
+    "GC=F":  ["GC=F","XAUUSD=X"],
+    "SI=F":  ["SI=F","XAGUSD=X"],
+    "CL=F":  ["CL=F"],
+    "BZ=F":  ["BZ=F"],
+    "PL=F":  ["PL=F"],
+    "PA=F":  ["PA=F"],
+  };
+  var trySyms = altSyms[ySym] || [ySym];
+
+  function tryNext(idx){
+    if(idx >= trySyms.length) return;
+    var s = trySyms[idx];
+    fetch("https://query2.finance.yahoo.com/v7/finance/quote?symbols=" + encodeURIComponent(s))
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(d){
+        var q = d && d.quoteResponse && d.quoteResponse.result && d.quoteResponse.result[0];
+        if(!q || !q.regularMarketPrice) throw new Error("no price");
+        var price = q.regularMarketPrice;
+        var chg   = q.regularMarketChangePercent || 0;
+        // Validate price bounds
+        if(!storeLivePrice(sym, price, chg, "Yahoo")){
+          tryNext(idx + 1); // try alternate symbol
+        }
+      })
+      .catch(function(){
+        if(idx === trySyms.length - 1){
+          // All v7 failed - try v8 as last resort
+          fetchYahooV8(sym, s);
+        } else {
+          tryNext(idx + 1);
+        }
+      });
+  }
+  tryNext(0);
 }
 
 function fetchPrices(){
